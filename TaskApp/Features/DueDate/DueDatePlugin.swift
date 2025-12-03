@@ -82,6 +82,7 @@ class DueDatePlugin: DataPlugin, ViewPlugin {
     /// Provee la vista de fecha de vencimiento para la fila de tarea
     /// - Parameter task: La tarea para la cual crear la vista
     /// - Returns: Vista de fecha de vencimiento usando ViewBuilder
+    @MainActor
     @ViewBuilder
     func taskRowView(for task: Task) -> some View {
         if isEnabled {
@@ -92,6 +93,7 @@ class DueDatePlugin: DataPlugin, ViewPlugin {
     /// Provee la vista de fecha de vencimiento para el detalle de tarea
     /// - Parameter task: Binding a la tarea para la cual crear la vista
     /// - Returns: Vista de fecha de vencimiento usando ViewBuilder
+    @MainActor
     @ViewBuilder
     func taskDetailView(for task: Binding<Task>) -> some View {
         if isEnabled {
@@ -101,6 +103,7 @@ class DueDatePlugin: DataPlugin, ViewPlugin {
     
     /// Provee la vista de configuración para el plugin de fechas de vencimiento
     /// - Returns: Vista de configuración usando ViewBuilder
+    @MainActor
     @ViewBuilder
     func settingsView() -> some View {
         Toggle("Show Due Dates", isOn: Binding(
