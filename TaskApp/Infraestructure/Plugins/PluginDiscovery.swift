@@ -41,8 +41,8 @@ class PluginDiscovery {
             if let currentClass = allClasses[Int(i)] {
                 let className = NSStringFromClass(currentClass)
                 
-                // OPTIMIZACIÓN 1: Filtrar solo clases de nuestro módulo/app
-                guard className.hasPrefix(executableName) else {
+                // OPTIMIZACIÓN 1: Filtrar solo clases de nuestro módulo/app que tengan el prefijo TaskApp
+                guard className.hasPrefix("TaskApp") else {
                     skippedCount += 1
                     continue
                 }
