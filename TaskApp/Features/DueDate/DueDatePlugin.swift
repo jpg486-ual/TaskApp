@@ -86,7 +86,7 @@ class DueDatePlugin: DataPlugin, ViewPlugin {
     @ViewBuilder
     func taskRowView(for task: Task) -> some View {
         if isEnabled {
-            DueDateRowView(viewModel: DueDateViewModel(task: task))
+            DueDateRowView(viewModel: DueDateViewModel(task: task, appConfig: config))
         }
     }
     
@@ -97,7 +97,7 @@ class DueDatePlugin: DataPlugin, ViewPlugin {
     @ViewBuilder
     func taskDetailView(for task: Binding<Task>) -> some View {
         if isEnabled {
-            DueDateDetailView(viewModel: DueDateViewModel(task: task.wrappedValue))
+            DueDateDetailView(viewModel: DueDateViewModel(task: task.wrappedValue, appConfig: config))
         }
     }
     

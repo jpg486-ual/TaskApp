@@ -3,14 +3,19 @@ import Combine
 import SwiftUI
 
 @MainActor
-class DueDateViewModel: ObservableObject {    
+class DueDateViewModel: ObservableObject {
     private let task: Task
     private let storageProvider: DueDateStorageProvider
     @Published var taskDueDate: TaskDueDate?
     
-    init(task: Task, storageProvider: DueDateStorageProvider = DueDateSwiftDataStorageProvider()) {
+    init(task: Task, appConfig: AppConfig) {
         self.task = task
-        self.storageProvider = storageProvider
+        switch appConfig.storageType {
+        case .swiftData:
+            self.storageProvider = DueDateSwiftDataStorageProvider()
+        case .json:
+            self.storageProvider = DueDateJSONStorageProvider()
+        }
         _Concurrency.Task { await self.load() }
     }
     
