@@ -17,11 +17,7 @@ class TaskListViewModel: ObservableObject {
         self.storageProvider = storageProvider
     }
     
-    @Published var tasks: [Task] = [
-        Task(title: "Comprar leche"),
-        Task(title: "Hacer ejercicio", priority: .high),
-        Task(title: "Llamar a mamá")
-    ]
+    @Published var tasks: [Task] = []
     
     func loadTasks() async {
         do {
