@@ -39,30 +39,16 @@ class DueDatePlugin: DataPlugin, ViewPlugin {
     func willDeleteTask(_ task: Task) async {
         guard isEnabled else { return }
         
-        guard let context = SwiftDataContext.shared else {
-            print("⚠️ DueDatePlugin: No hay contexto SwiftData disponible")
-            return
-        }
-        
         do {
-            // Buscar todos los TaskDueDate asociados a esta tarea
-            let descriptor = FetchDescriptor<TaskDueDate>(
-                predicate: #Predicate { $0.taskUid == task.id }
-            )
-            
-            let dueDates = try context.fetch(descriptor)
-            
-            if !dueDates.isEmpty {
-                print("🗑️ DueDatePlugin: Eliminando \(dueDates.count) fecha(s) de vencimiento para tarea '\(task.title)'")
-                
-                for dueDate in dueDates {
-                    context.delete(dueDate)
-                }
-                
-                try context.save()
-                print("✅ DueDatePlugin: Fechas de vencimiento eliminadas correctamente")
+            let provider: DueDateStorageProvider
+            switch config.storageType {
+            case .swiftData:
+                provider = DueDateSwiftDataStorageProvider()
+            case .json:
+                provider = DueDateJSONStorageProvider()
             }
-            
+            try await provider.deleteDueDates(for: task.id)
+            print("🗑️ DueDatePlugin: Fechas de vencimiento eliminadas para tarea '\(task.title)'")
         } catch {
             print("❌ DueDatePlugin: Error al eliminar fechas de vencimiento: \(error)")
         }

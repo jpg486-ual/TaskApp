@@ -4,6 +4,7 @@ import SwiftData
 protocol DueDateStorageProvider {
     func loadTaskDueDate(for taskId: UUID) async throws -> TaskDueDate?
     func saveTaskDueDate(_ dueDate: TaskDueDate) async throws
+    func deleteDueDates(for taskId: UUID) async throws
 }
 
 class DueDateSwiftDataStorageProvider: DueDateStorageProvider {
@@ -28,6 +29,15 @@ class DueDateSwiftDataStorageProvider: DueDateStorageProvider {
             context.insert(dueDate)
         }
         // If exists, it's already modified since it's the same object
+        try context.save()
+    }
+    
+    func deleteDueDates(for taskId: UUID) async throws {
+        let descriptor = FetchDescriptor<TaskDueDate>(predicate: #Predicate { $0.taskUid == taskId })
+        let dueDates = try context.fetch(descriptor)
+        for dueDate in dueDates {
+            context.delete(dueDate)
+        }
         try context.save()
     }
     
@@ -61,6 +71,17 @@ class DueDateJSONStorageProvider: DueDateStorageProvider {
             dueDates.append(dueDate)
         }
         let data = try JSONEncoder().encode(dueDates)
+        try data.write(to: fileURL)
+    }
+    
+    func deleteDueDates(for taskId: UUID) async throws {
+        var dueDates: [TaskDueDate] = []
+        if FileManager.default.fileExists(atPath: fileURL.path) {
+            let data = try Data(contentsOf: fileURL)
+            dueDates = (try? JSONDecoder().decode([TaskDueDate].self, from: data)) ?? []
+        }
+        let filtered = dueDates.filter { $0.taskUid != taskId }
+        let data = try JSONEncoder().encode(filtered)
         try data.write(to: fileURL)
     }
 }
